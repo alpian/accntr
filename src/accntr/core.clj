@@ -36,12 +36,28 @@
   [#"^AIB       171000020.*$" :santam [:insurance]]
   [#"^NANDOS - BNDB.*$" :nandos [:food :eating-out]]
   [#"^T SMUTS.*$" :tanya-smuts [:psychology]]
+  [#"^OUDEHOF APTEEK.*$" :pharmacy [:medication]]
+  [#"^CHAMELEONS.*$" :chameleons [:school]]
+  [#"^517374 WELGEMO.*$" :bp [:petrol]]
+  [#"^TOTALSPORTS.*$" :totalsports [:clothes]]
+  [#"^GELATO MANIA.*$" :gelato-mania [:food :eating-out]]
+  [#"^HARBOUR HOUSE.*$" :harbour-house [:food :eating-out]]
+  [#"^KENRIDGE 5838.*$" :atm [:cash]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
-
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
 ])
 
 (defn csv-data->maps [csv-data]
@@ -82,7 +98,7 @@
 
 (defn calculate [tag categorized]
   (let [tagged (filter (fn [row] (some #(= tag %) (:tags row))) categorized)]
-    (println (apply + (:amount tagged)))
+    (println tag (reduce + (map #(:amount %) tagged)))
   ))
 
 (defn -main
@@ -97,4 +113,6 @@
     (doseq [record (map #(:record %) uncategorized-debits)]
       (println (:description record) (:source record) (:amount record)))
     (println (count uncategorized-debits)
-    (calculate :food categorized))))
+    (calculate :food categorized)
+    (calculate :eating-out categorized)
+    (calculate :cash categorized))))
