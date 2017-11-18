@@ -31,7 +31,7 @@
   [#"^OUMEUL WILABS.*$" :ou-meul [:food]]
   [#"^PNP KENRIDGE.*$" :picknpay [:food]]
   [#"^Clicks Gar.*$" :clicks [:medication]]
-  [#"^I SnapScan Kne.*$" :knead [:food :eating-out :work-lunch]]
+  [#"^I SnapScan Kne.*$" :knead [:food :eating-out :work-food]]
   [#"^'-387-6-1.*$" :savings [:save]]
   [#"^AIB       171000020.*$" :santam [:insurance]]
   [#"^NANDOS - BNDB.*$" :nandos [:food :eating-out]]
@@ -43,6 +43,29 @@
   [#"^GELATO MANIA.*$" :gelato-mania [:food :eating-out]]
   [#"^HARBOUR HOUSE.*$" :harbour-house [:food :eating-out]]
   [#"^KENRIDGE 5838.*$" :atm [:cash]]
+  [#"^KFC.*$" :kfc [:food :eating-out]]
+  [#"^C*BP KENRIDGE.*$" :bp [:petrol]]
+  [#"^Dogs Bollo.*$" :dogs-bollocks [:food :work-food]]
+  [#"^BEN WEI SUSHI.*$" :ben-wei [:food :work-food]]
+  [#"^.*WOLFPACK RUN.*$" :run-specialist-store [:exercise]]
+  [#"^NIKE V&A CAPE.*$" :nike [:exercise]]
+  [#"^SIMPLY ASIA.*$" :simply-asia [:food :eating-out]]
+  [#"^PRIMI PIATTI.*$" :primi-piatti [:food :eating-out]]
+  [#"^TIMO.*$" :timo [:kitesurfing :lessons]]
+  [#"^CABRINHA KITEBOARD.*$" :cabrinha [:kitesurfing]]
+  [#"^Vineyard Deli.*$" :vineyard-deli [:food]]
+  [#"^BP KENRIDGAUTO.*$" :bp [:petrol]]
+  [#"^SUNGLASS HUT.*$" :sunglass-hut [:clothes]]
+  [#"^WOODHEADS.*$" :woodheads [:clothes]]
+  [#"^VILLAGE SERVIC.*$" :village-service [:petrol]]
+  [#"^BLOEMENDAL WIN.*$" :bon-amis [:food :eating-out]]
+  [#"^BON AMIS.*$" :bon-amis [:food :eating-out]]
+  [#"^PAUL GRAPENDAAL.*$" :paul [:other]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
+  ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
@@ -96,10 +119,14 @@
       csv-data->maps
       categorize))))
 
-(defn calculate [tag categorized]
-  (let [tagged (filter (fn [row] (some #(= tag %) (:tags row))) categorized)]
-    (println tag (reduce + (map #(:amount %) tagged)))
-  ))
+(defn search [tag categorized]
+  (filter (fn [row] (some #(= tag %) (:tags row))) categorized))
+
+(defn search-not [tag categorized]
+  (filter (complement (fn [row] (some #(= tag %) (:tags row)))) categorized))
+
+(defn calculate [description categorized]
+  (println description (reduce + (map #(:amount %) categorized))))
 
 (defn -main
   "Read and categorize expenses"
@@ -113,6 +140,12 @@
     (doseq [record (map #(:record %) uncategorized-debits)]
       (println (:description record) (:source record) (:amount record)))
     (println (count uncategorized-debits)
-    (calculate :food categorized)
-    (calculate :eating-out categorized)
-    (calculate :cash categorized))))
+    (calculate "Food" (search-not :eating-out (search :food categorized)))
+    (calculate "Eating out" (search :eating-out categorized))
+    (calculate "Work food" (search :work-food categorized))
+    (calculate "Cash" (search :cash categorized))
+    (calculate "Petrol" (search :petrol categorized))
+    (calculate "Exercise" (search :exercise categorized))
+    (calculate "Clothes" (search :clothes categorized))
+    (calculate "Kitesurfing" (search :kitesurfing categorized))
+    )))
