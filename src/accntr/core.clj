@@ -28,7 +28,7 @@
   [#"^LEANDRI.*$" :leandri [:baby-sitting]]
   [#"^WELGEMOED ANIM.*$" :welgemoed-anim [:dogs]]
   [#"^272713422 ELEC      01023614165.*$" :dis-chem [:toiletries]]
-  [#"^OUMEUL WILABS.*$" :ou-meul [:food]]
+  [#"^OUMEUL WILABS.*$" :ou-meul [:food :eating-out]]
   [#"^PNP KENRIDGE.*$" :picknpay [:food]]
   [#"^Clicks Gar.*$" :clicks [:medication]]
   [#"^I SnapScan Kne.*$" :knead [:food :eating-out :work-food]]
@@ -54,16 +54,36 @@
   [#"^TIMO.*$" :timo [:kitesurfing :lessons]]
   [#"^CABRINHA KITEBOARD.*$" :cabrinha [:kitesurfing]]
   [#"^Vineyard Deli.*$" :vineyard-deli [:food]]
-  [#"^BP KENRIDGAUTO.*$" :bp [:petrol]]
+  [#"^.*BP KENRIDG.*$" :bp [:petrol]]
   [#"^SUNGLASS HUT.*$" :sunglass-hut [:clothes]]
   [#"^WOODHEADS.*$" :woodheads [:clothes]]
   [#"^VILLAGE SERVIC.*$" :village-service [:petrol]]
   [#"^BLOEMENDAL WIN.*$" :bon-amis [:food :eating-out]]
   [#"^BON AMIS.*$" :bon-amis [:food :eating-out]]
   [#"^PAUL GRAPENDAAL.*$" :paul [:other]]
-  ;[#"^.*$" : [:]]
-  ;[#"^.*$" : [:]]
-  ;[#"^.*$" : [:]]
+  [#"^COTTON ON KIDS.*$" :cotton-on-kids [:clothes]]
+  [#"^.*CAFE ROUSSE.*$" :cafe-rousse [:food :eating-out]]
+  [#"^WELLNESS.*$" :wellness-center [:medication]]
+  [#"^PEARLYS.*$" :pearlys [:food :eating-out]]
+  [#"^DISC PREM.*$" :discovery [:exercise]]
+  [#"^.*SCRATCH PATC.*$" :scratch-patch [:entertainment]]
+  [#"^MUSICAL RASCALS.*$" :musical-rascals [:school]]
+  [#"^FRANK FOWDEN.*$" :frank-fowden [:hair]]
+  [#"^YANCKE BAXTER.*$" :yanke-baxter [:school]]
+  [#"^THE BALLET BOX.*$" :the-ballet-box [:school]]
+  [#"^JET TYGERVALLE.*$" :jet [:clothes]]
+  [#"^MARCELS.*$" :marcels [:food :eating-out]]
+  [#"^SFH COSMIC CA.*$" :cosmic-candy [:food :eating-out]]
+  [#"^THE COCK N BUL.*$" :cock-n-bull [:other]]
+  [#"^SHOP 9 CONSTAN.*$" :toy-shop [:toys]]
+  [#"^TASHA'S.*$" :tashas [:food :eating-out]]
+  [#"^DURBANVILLE GA.*$" :durbanville-games [:entertainment]]
+  [#"^PnP Crp Consta.*$" :picknpay [:food]]
+  [#"^SUPERDRY.*$" :superdry [:clothes]]
+  [#"^Musica.*$" :musica [:entertainment]]
+  [#"^.*Snap[Ss]can.*$" :snapscan [:snapscan]]
+  [#"^THE WATERFRONT.*$" :waterfront [:other]]
+  [#"^C\*Truworths.*$" :truworths [:clothes]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
@@ -126,7 +146,9 @@
   (filter (complement (fn [row] (some #(= tag %) (:tags row)))) categorized))
 
 (defn calculate [description categorized]
-  (println description (reduce + (map #(:amount %) categorized))))
+  (let [amount (reduce + (map #(:amount %) categorized))]
+    (println description amount)
+    amount))
 
 (defn -main
   "Read and categorize expenses"
@@ -140,12 +162,35 @@
     (doseq [record (map #(:record %) uncategorized-debits)]
       (println (:description record) (:source record) (:amount record)))
     (println (count uncategorized-debits)
-    (calculate "Food" (search-not :eating-out (search :food categorized)))
-    (calculate "Eating out" (search :eating-out categorized))
-    (calculate "Work food" (search :work-food categorized))
-    (calculate "Cash" (search :cash categorized))
-    (calculate "Petrol" (search :petrol categorized))
-    (calculate "Exercise" (search :exercise categorized))
-    (calculate "Clothes" (search :clothes categorized))
-    (calculate "Kitesurfing" (search :kitesurfing categorized))
-    )))
+    (let [total
+        (+
+          (calculate "Rent" (search :rent categorized))
+          ;(calculate "Save" (search :save categorized))
+          (calculate "Food" (search-not :eating-out (search :food categorized)))
+          (calculate "Eating out" (search :eating-out categorized))
+          (calculate "Work food" (search :work-food categorized))
+          (calculate "Cash" (search :cash categorized))
+          (calculate "Dogs" (search :dogs categorized))
+          (calculate "Taxi" (search :taxi categorized))
+          (calculate "Petrol" (search :petrol categorized))
+          (calculate "Exercise" (search :exercise categorized))
+          (calculate "Clothes" (search :clothes categorized))
+          (calculate "Kitesurfing" (search :kitesurfing categorized))
+          (calculate "Entertainment" (search :entertainment categorized))
+          (calculate "SnapScan" (search :snapscan categorized))
+          (calculate "Phone" (search :phone categorized))
+          (calculate "Dogfood" (search :dog-food categorized))
+          (calculate "Electricity" (search :electricity categorized))
+          (calculate "Toys" (search :toys categorized))
+          (calculate "School" (search :school categorized))
+          (calculate "Hair" (search :hair categorized))
+          (calculate "Medication" (search :medication categorized))
+          (calculate "Psychology" (search :psychology categorized))
+          (calculate "Toiletries" (search :toiletries categorized))
+          (calculate "Babysitting" (search :baby-sitting categorized))
+          (calculate "Bank Fees" (search :bank-fees categorized))
+          (calculate "Internet" (search :internet categorized))
+          (calculate "Insurance" (search :insurance categorized))
+          (calculate "Other" (search :other categorized)))]
+        (println total)
+    ))))
