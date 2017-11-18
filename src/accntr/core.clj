@@ -82,7 +82,7 @@
 
 (defn calculate [tag categorized]
   (let [tagged (filter (fn [row] (some #(= tag %) (:tags row))) categorized)]
-    (println (reduce + (:amount tagged)))
+    (println (apply + (:amount tagged)))
   ))
 
 (defn -main
