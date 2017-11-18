@@ -15,9 +15,9 @@
   [#"^272713422 VOD PREPA.*$" :vodacom [:phone]]
   [#"^VOD PREPAID    0791716430.*$" :vodacom [:phone]]
   [#"^PAM GOLDING.*$" :pam-golding [:rent]]
-  [#"^I SnapScan Ecc.*$" :ecco [:food]]
+  [#"^I SnapScan Ecc.*$" :ecco [:food :work-food]]
   [#"^SUPERSPAR WELG.*$" :spar [:food]]
-  [#"^I SnapScan Del.*$" :deluxe [:food]]
+  [#"^I SnapScan Del.*$" :deluxe [:food :coffee]]
   [#"^ABSOLUTE PETS.*$" :absolute-pets [:dog-food]]
   [#"^VOD PREPAID    0713369497.*$" :vodacom [:phone]]
   [#"^Clicks Gardens.*$" :clicks [:medication]]
@@ -31,11 +31,12 @@
   [#"^OUMEUL WILABS.*$" :ou-meul [:food :eating-out]]
   [#"^PNP KENRIDGE.*$" :picknpay [:food]]
   [#"^Clicks Gar.*$" :clicks [:medication]]
-  [#"^I SnapScan Kne.*$" :knead [:food :eating-out :work-food]]
+  [#"^I SnapScan Kne.*$" :knead [:food :work-food]]
   [#"^'-387-6-1.*$" :savings [:save]]
-  [#"^AIB       171000020.*$" :santam [:insurance]]
+  [#"^AIB.*$" :santam [:insurance]]
   [#"^NANDOS - BNDB.*$" :nandos [:food :eating-out]]
   [#"^T SMUTS.*$" :tanya-smuts [:psychology]]
+  [#"^CLAIRE GREGOROWSKI.*$" :claire-gregorowski [:psychology]]
   [#"^OUDEHOF APTEEK.*$" :pharmacy [:medication]]
   [#"^CHAMELEONS.*$" :chameleons [:school]]
   [#"^517374 WELGEMO.*$" :bp [:petrol]]
@@ -70,7 +71,7 @@
   [#"^MUSICAL RASCALS.*$" :musical-rascals [:school]]
   [#"^FRANK FOWDEN.*$" :frank-fowden [:hair]]
   [#"^YANCKE BAXTER.*$" :yanke-baxter [:school]]
-  [#"^THE BALLET BOX.*$" :the-ballet-box [:school]]
+  [#"^THE BALLET BOX.*$" :the-ballet-box [:exercise :ballet]]
   [#"^JET TYGERVALLE.*$" :jet [:clothes]]
   [#"^MARCELS.*$" :marcels [:food :eating-out]]
   [#"^SFH COSMIC CA.*$" :cosmic-candy [:food :eating-out]]
@@ -84,7 +85,7 @@
   [#"^.*Snap[Ss]can.*$" :snapscan [:snapscan]]
   [#"^THE WATERFRONT.*$" :waterfront [:other]]
   [#"^C\*Truworths.*$" :truworths [:clothes]]
-  ;[#"^.*$" : [:]]
+  [#"^SBSA VAF.*$" :standard-bank [:cars]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
   ;[#"^.*$" : [:]]
@@ -165,8 +166,13 @@
     (let [total
         (+
           (calculate "Rent" (search :rent categorized))
+          (calculate "Cars" (search :cars categorized))
           ;(calculate "Save" (search :save categorized))
-          (calculate "Food" (search-not :eating-out (search :food categorized)))
+          (calculate "Food"
+            (search-not :coffee
+              (search-not :work-food
+                (search-not :eating-out
+                  (search :food categorized)))))
           (calculate "Eating out" (search :eating-out categorized))
           (calculate "Work food" (search :work-food categorized))
           (calculate "Cash" (search :cash categorized))
@@ -191,6 +197,7 @@
           (calculate "Bank Fees" (search :bank-fees categorized))
           (calculate "Internet" (search :internet categorized))
           (calculate "Insurance" (search :insurance categorized))
+          (calculate "Coffee" (search :coffee categorized))
           (calculate "Other" (search :other categorized)))]
         (println total)
     ))))
